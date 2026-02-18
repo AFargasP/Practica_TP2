@@ -39,10 +39,6 @@ public class RegionManager implements AnimalMapView{
 		this.animalRegion = new HashMap<>();
 	}
 	
-	private int regionXdelAnimal(Animal a) {
-		int x = (int) (a.getPosgetX()/regionWidth);
-.		
-	}
 	
 	public void setRegion(int row, int col, Region r) {
 		Region oldRegion = regions[col][row];
@@ -135,11 +131,10 @@ public class RegionManager implements AnimalMapView{
 	public List<Animal> getAnimalsInRange(Animal e, Predicate<Animal> filter) {
 		List<Animal> animalsInRange = new ArrayList<>();
 		Predicate<Animal> filterDistance = animal -> (animal.getPosition().distanceTo(e.getPosition()) < animal.getSightRange());
+		List<Region> regionsInRange = new ArrayList<>();
 		
 		for (int i = 0; i < rows; i++) { 
 		    for (int j = 0; j < cols; j++) {
-		    	double distanciaX = Math.abs(e.getPosition().getX() - regionWidth);
-		    	double distanciaY = Math.abs(e.getPosition().getY() - regionHeight);
 		    	if(distanciaX < e.getSightRange() || distanciaY < e.getSightRange()) {
 		    		animalsInRange = regions[i][j].getAnimals().stream().filter(filter).filter(filterDistance).collect(Collectors.toList());
 		    	}
