@@ -3,8 +3,9 @@ package simulator.factories;
 import org.json.JSONObject;
 
 import simulator.model.DinamicSupplyRegion;
+import simulator.model.Region;
 
-public class DinamicSupplyRegionBuilder extends Builder<DinamicSupplyRegion> {
+public class DinamicSupplyRegionBuilder extends Builder<Region> {
 
 	public DinamicSupplyRegionBuilder() {
 		super("dynamic", );

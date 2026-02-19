@@ -1,6 +1,7 @@
 package simulator.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -18,7 +19,7 @@ public class Region implements Entity, FoodSupplier, RegionInfo {
 	}
 	
 	final List<Animal> getAnimals() {
-		return listaAnimales;
+		return Collections.unmodifiableList(listaAnimales);
 	}
 	
 	public JSONObject asJSON() {

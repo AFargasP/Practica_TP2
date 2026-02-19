@@ -2,8 +2,6 @@ package simulator.model;
 
 
 import org.json.JSONObject;
-
-import constantes.ConstantesGlobales;
 import simulator.misc.Utils;
 import simulator.misc.Vector2D;
 
@@ -80,10 +78,9 @@ public abstract class Animal implements AnimalInfo, Entity {
 		mateTarget = mateStrategy.select(this, regionMngr.getAnimalsInRange(this, animal -> animal.getGeneticCode() == this.getGeneticCode()));
 	}
 	
-	protected void selectHuntOrDangerTarget() {
-		mateTarget = mateStrategy.select(this, regionMngr.getAnimalsInRange(this, animal -> animal.getGeneticCode() != this.getGeneticCode()));
+	protected void setDesire(double d) {
+		this.desire = d;
 	}
-	
 
 	
 	// GETTERS
@@ -123,7 +120,7 @@ public abstract class Animal implements AnimalInfo, Entity {
 	}
 
 	@Override
-	public Vector2D getDestination() {
+	public Vector2D getDestination() { 
 		return this.dest;
 	}
 
@@ -196,10 +193,5 @@ public abstract class Animal implements AnimalInfo, Entity {
 		System.out.println(jsonObject.toString(3));	//PARA SACARLO POR PANTALLA POR LINEAS SEPARADAS	
 		
 		return jsonObject;
-	}
-	
-	public void ajustaAtributos(double atributo) {
-		if(atributo < 0.0) atributo = 0.0;
-		if(atributo > 100.0) atributo = 100.0;
 	}
 }

@@ -32,7 +32,11 @@ public class Sheep extends Animal{
 		this.dangerStrategy = dangerStrategy;
 		
 	}
-
+	
+	private void selectDangerTarget() {
+		dangerSource = dangerStrategy.select(this, regionMngr.getAnimalsInRange(this, animal -> animal.getGeneticCode() != this.getGeneticCode()));
+	}
+	
 	
 
 	public void update(double dt) {
@@ -46,12 +50,12 @@ public class Sheep extends Animal{
 			
 			move(speed*dt*Math.exp((energy-100.0)*HUNGER_DECAY_EXP_FACTOR));
 			energy -= FOOD_DROP_RATE_SHEEP*dt;
-			ajustaAtributos(energy);
+			Utils.constrainValueInRange(energy, 0.0, 100.0);
 			desire += DESIRE_INCREASE_RATE_SHEEP*dt;
-			ajustaAtributos(desire);
+			Utils.constrainValueInRange(desire, 0.0, 100.0);
 			
 			if(dangerSource == null) {
-				selectHuntOrDangerTarget();
+				selectDangerTarget();
 			}
 			
 			if(dangerSource != null) {
@@ -70,15 +74,15 @@ public class Sheep extends Animal{
 				pos = pos.plus(pos.minus(dangerSource.getPosition().direction()));
 				move(BOOST_FACTOR_SHEEP*speed*dt*Math.exp((energy-100.0)*HUNGER_DECAY_EXP_FACTOR));
 				energy -= FOOD_DROP_RATE_SHEEP*FOOD_DROP_BOOST_FACTOR_SHEEP*dt;
-				ajustaAtributos(energy);
+				Utils.constrainValueInRange(energy, 0.0, 100.0);
 				desire += DESIRE_INCREASE_RATE_SHEEP*dt;
-				ajustaAtributos(desire);
+				Utils.constrainValueInRange(desire, 0.0, 100.0);
 			} else {
 				move(speed*dt*Math.exp((energy-100.0)*HUNGER_DECAY_EXP_FACTOR));
 			}
 			
 			if(dangerSource == null || pos.distanceTo(dangerSource.getPosition()) > sightRange) {
-				selectHuntOrDangerTarget();
+				selectDangerTarget();
 			}
 			
 			if(dangerSource == null) {
@@ -106,12 +110,12 @@ public class Sheep extends Animal{
 				dest = mateTarget.getPosition();
 				move(BOOST_FACTOR_SHEEP*speed*dt*Math.exp((energy-100.0)*HUNGER_DECAY_EXP_FACTOR));
 				energy -= FOOD_DROP_RATE_SHEEP*FOOD_DROP_BOOST_FACTOR_SHEEP*dt;
-				ajustaAtributos(energy);
+				Utils.constrainValueInRange(energy, 0.0, 100.0);
 				desire += DESIRE_INCREASE_RATE_SHEEP*dt;
-				ajustaAtributos(desire);
+				Utils.constrainValueInRange(desire, 0.0, 100.0);
 				if(pos.distanceTo(mateTarget.getPosition()) < COLLISION_RANGE) {
 					desire = 0.0;
-					mateTarget.desire = 0.0;  // hacer setter
+					mateTarget.setDesire(0.0);
 					if(!this.isPregnant()) {
 						double x = Utils.RAND.nextDouble(0, 1);
 						if(x < PREGNANT_PROBABILITY_SHEEP) {
@@ -123,7 +127,7 @@ public class Sheep extends Animal{
 			}
 			
 			if(dangerSource == null) {
-				selectHuntOrDangerTarget();
+				selectDangerTarget();
 				if(dangerSource == null) {
 					setDangerStateAction();
 				} else {
@@ -149,7 +153,7 @@ public class Sheep extends Animal{
 		
 		if(state != State.DEAD) { //Pide comida y la suma a la energia
 			energy += regionMngr.getFood(this, dt); 
-			ajustaAtributos(energy);
+			Utils.constrainValueInRange(energy, 0.0, 100.0);;
 		}
 	}
 	

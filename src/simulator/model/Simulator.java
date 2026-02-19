@@ -1,17 +1,18 @@
 package simulator.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.json.JSONObject;
 import simulator.factories.Factory;
 
 public class Simulator implements JSONable{
-	Factory<Animal> animalFactory;
-	Factory<Region> regionFactory;
+	private Factory<Animal> animalFactory;
+	private Factory<Region> regionFactory;
 	
-	RegionManager regionManager;
+	private RegionManager regionManager;
 	double actualTime;
-	List<Animal> listaAnimalSimulation;
+	private List<Animal> listaAnimalSimulation;
 	
 	public Simulator(int cols, int rows, int width, int height,   
             Factory<Animal> animalsFactory, Factory<Region> regionsFactory) {
@@ -48,7 +49,7 @@ public class Simulator implements JSONable{
 	}
 	
 	public List<? extends AnimalInfo> getAnimals() {
-		return listaAnimalSimulation;
+		return Collections.unmodifiableList(listaAnimalSimulation);
 	}
 	
 	public double getTime() {

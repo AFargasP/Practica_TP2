@@ -34,6 +34,11 @@ public class Wolf extends Animal{
 		this.huntTarget = null;
 	}
 	
+	
+	private void selectHuntTarget() {
+		huntTarget = huntingStrategy.select(this, regionMngr.getAnimalsInRange(this, animal -> animal.getGeneticCode() != this.getGeneticCode()));
+	}
+	
 	public void update(double dt) {
 		if(state == State.DEAD) return;
 		
@@ -45,9 +50,9 @@ public class Wolf extends Animal{
 			
 			move(speed*dt*Math.exp((energy-100.0)*HUNGER_DECAY_EXP_FACTOR));
 			this.energy -= FOOD_DROP_RATE_WOLF*dt;
-			ajustaAtributos(energy);
+			Utils.constrainValueInRange(energy, 0.0, 100.0);
 			this.desire += DESIRE_INCREASE_RATE_WOLF*dt;
-			ajustaAtributos(desire);
+			Utils.constrainValueInRange(desire, 0.0, 100.0);
 			
 			if(energy < FOOD_THRSHOLD_WOLF) {
 				setHungerStateAction();
@@ -61,7 +66,7 @@ public class Wolf extends Animal{
 		case HUNGER: 
 			if((huntTarget.getState() == State.DEAD || pos.distanceTo(huntTarget.getPosition()) > sightRange)
 					|| huntTarget == null) {
-				selectHuntOrDangerTarget();
+				selectHuntTarget();
 			}
 			
 			if(huntTarget == null) move(speed*dt*Math.exp((energy-100.0)*HUNGER_DECAY_EXP_FACTOR));
@@ -69,15 +74,15 @@ public class Wolf extends Animal{
 				dest = huntTarget.getPosition();
 				move(BOOST_FACTOR_WOLF*speed*dt*Math.exp((energy-100.0)*HUNGER_DECAY_EXP_FACTOR));
 				this.energy -= FOOD_DROP_RATE_WOLF*dt*FOOD_DROP_BOOST_FACTOR_WOLF;
-				ajustaAtributos(energy);
+				Utils.constrainValueInRange(energy, 0.0, 100.0);
 				this.desire += DESIRE_INCREASE_RATE_WOLF*dt;
-				ajustaAtributos(desire);
+				Utils.constrainValueInRange(desire, 0.0, 100.0);
 				
 				if(this.pos.distanceTo(huntTarget.getPosition()) < COLLISION_RANGE) {
-					huntTarget.state = State.DEAD;
+					huntTarget.setDeadStateAction();
 					huntTarget = null;
 					energy += FOOD_EAT_VALUE_WOLF;
-					ajustaAtributos(energy);
+					Utils.constrainValueInRange(energy, 0.0, 100.0);;
 				}		
 			}
 			if(energy > 50) {
@@ -101,20 +106,21 @@ public class Wolf extends Animal{
 				dest = mateTarget.getPosition();
 				move(BOOST_FACTOR_WOLF*speed*dt*Math.exp((energy-100.0)*HUNGER_DECAY_EXP_FACTOR));
 				this.energy -= FOOD_DROP_RATE_WOLF*dt*FOOD_DROP_BOOST_FACTOR_WOLF;
-				ajustaAtributos(energy);
+				Utils.constrainValueInRange(energy, 0.0, 100.0);
 				this.desire += DESIRE_INCREASE_RATE_WOLF*dt;
-				ajustaAtributos(desire);
+				Utils.constrainValueInRange(desire, 0.0, 100.0);
 				
 				if(this.pos.distanceTo(mateTarget.getPosition()) < COLLISION_RANGE) {
-					mateTarget.desire = 0.0;
+					mateTarget.setDesire(0.0);
 					this.desire = 0.0;
 					if(!this.isPregnant()) {
 						double x = Utils.RAND.nextDouble(0, 1);
 						if(x < PREGNANT_PROBABILITY_WOLF) {
 							this.baby = new Wolf(this, mateTarget);
 						}
-					}					this.energy -= 10;
-					ajustaAtributos(energy);
+					}			
+					this.energy -= 10;
+					Utils.constrainValueInRange(energy, 0.0, 100.0);;
 					mateTarget = null;
 				}
 			}
@@ -132,16 +138,16 @@ public class Wolf extends Animal{
 		
 		if(pos.isOut(regionMngr.getWidth()-1, regionMngr.getHeight()-1)) { //Ajusta pos y pone estado a normal
 			pos.ajustaPosicion(regionMngr.getWidth()-1, regionMngr.getHeight()-1);
-			state = State.NORMAL;
+			setNormalStateAction();
 		}
 		
 		if(energy <= 0.0 || age > MAX_AGE_WOLF) {
-			state = State.DEAD;
+			setDeadStateAction();
 		}
 		
 		if(state != State.DEAD) { //Pide comida y la suma a la energia
 			energy += regionMngr.getFood(this, dt); 
-			ajustaAtributos(energy);
+			Utils.constrainValueInRange(energy, 0.0, 100.0);
 		}
 	}
 

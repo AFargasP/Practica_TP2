@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import org.json.JSONObject;
 
+import simulator.misc.Utils;
 import simulator.misc.Vector2D;
 
 public class RegionManager implements AnimalMapView{
@@ -36,7 +37,8 @@ public class RegionManager implements AnimalMapView{
 		    }
 		}
 		
-		this.animalRegion = new HashMap<>();
+		this.animalRegion = new HashMap<Animal, Region>();
+		//this.animalRegion = new HashMap<>();
 	}
 	
 	
@@ -53,7 +55,17 @@ public class RegionManager implements AnimalMapView{
 	private Region regionDelAnimal(Vector2D v) {
 		int x = (int) (v.getX()/regionWidth);
 		int y = (int) (v.getY()/regionHeight);
-		return regions[x+1][y+1];
+		return regions[x][y];
+	}
+	
+	private int regionXdelAnimal(double dist) {
+		int x = (int)(dist/regionWidth);
+		return x;
+	}
+	
+	private int regionYdelAnimal(double dist) {
+		int y = (int)(dist/regionHeight);
+		return y;
 	}
 	
 	public void registerAnimal(Animal a) {
@@ -131,13 +143,26 @@ public class RegionManager implements AnimalMapView{
 	public List<Animal> getAnimalsInRange(Animal e, Predicate<Animal> filter) {
 		List<Animal> animalsInRange = new ArrayList<>();
 		Predicate<Animal> filterDistance = animal -> (animal.getPosition().distanceTo(e.getPosition()) < animal.getSightRange());
-		List<Region> regionsInRange = new ArrayList<>();
 		
-		for (int i = 0; i < rows; i++) { 
-		    for (int j = 0; j < cols; j++) {
-		    	if(distanciaX < e.getSightRange() || distanciaY < e.getSightRange()) {
-		    		animalsInRange = regions[i][j].getAnimals().stream().filter(filter).filter(filterDistance).collect(Collectors.toList());
-		    	}
+		double horizontalVisionRangeDcha = e.getPosition().getX() + e.getSightRange();
+		double verticalVisionRangeAbajo = e.getPosition().getY() + e.getSightRange();
+		double horizontalVisionRangeIzq = e.getPosition().getX() - e.getSightRange();
+		double verticalVisionRangeArriba = e.getPosition().getY() - e.getSightRange();	
+		
+		int finalX = regionXdelAnimal(horizontalVisionRangeDcha);
+		int finalY = regionYdelAnimal(verticalVisionRangeAbajo);
+		int initX = regionXdelAnimal(horizontalVisionRangeIzq);
+		int initY = regionYdelAnimal(verticalVisionRangeArriba);
+		
+		Utils.constrainValueInRange(finalX, 0, cols-1);
+		Utils.constrainValueInRange(initX, 0, cols-1);
+		Utils.constrainValueInRange(finalY, 0, rows-1);
+		Utils.constrainValueInRange(initY, 0, rows-1);
+		
+		
+		for (int i = initY; i < finalY; i++) { 
+		    for (int j = initX; j < finalX; j++) {
+		    	animalsInRange = regions[i][j].getAnimals().stream().filter(filter).filter(filterDistance).collect(Collectors.toList());
 		    }
 		}
 		return animalsInRange;

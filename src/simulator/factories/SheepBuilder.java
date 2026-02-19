@@ -4,14 +4,15 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import simulator.misc.Vector2D;
+import simulator.model.Animal;
 import simulator.model.SelectFirst;
 import simulator.model.SelectionStrategy;
 import simulator.model.Sheep;
 
-public class SheepBuilder extends Builder<Sheep> {
+public class SheepBuilder extends Builder<Animal> {
 	private Factory<SelectionStrategy> selectionStrategy;
 
-	public SheepBuilder( Factory<SelectionStrategy> selectionStrategyFactory) {
+	public SheepBuilder(Factory<SelectionStrategy> selectionStrategyFactory) {
 		super("sheep", "");
 		this.selectionStrategy = selectionStrategyFactory;
 	}

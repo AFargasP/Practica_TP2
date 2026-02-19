@@ -42,7 +42,7 @@ public class Controller {
 				
 				for (int j = initRows; j < finalRows; j++) {
 					for (int k = initCols; k < finalCols; k++) {
-						sim.setRegion(j, k, jsonRegion);;
+						sim.setRegion(j, k, jsonRegion);
 					}	
 				}
 			}	
