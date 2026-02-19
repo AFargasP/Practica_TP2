@@ -13,7 +13,7 @@ public class SheepBuilder extends Builder<Animal> {
 	private Factory<SelectionStrategy> selectionStrategy;
 
 	public SheepBuilder(Factory<SelectionStrategy> selectionStrategyFactory) {
-		super("sheep", "");
+		super("sheep", "Sheep");
 		this.selectionStrategy = selectionStrategyFactory;
 	}
 

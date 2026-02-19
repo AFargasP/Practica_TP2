@@ -15,7 +15,7 @@ public class WolfBuilder extends Builder<Animal> {
 
 
 	public WolfBuilder(Factory<SelectionStrategy> selectionStrategyFactory) {
-		super("wolf", );
+		super("wolf", "Wolf");
 		this.selectionStrategy = selectionStrategyFactory;
 		
 		

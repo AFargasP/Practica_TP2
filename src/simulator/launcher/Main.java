@@ -26,6 +26,8 @@ import simulator.factories.SheepBuilder;
 import simulator.factories.SelectClosestBuilder;
 import simulator.factories.SelectYoungestBuilder;
 import simulator.factories.SelectFirstBuilder;
+import simulator.factories.DefaultRegionBuilder;
+import simulator.factories.DinamicSupplyRegionBuilder;
 import simulator.factories.WolfBuilder;
 import simulator.misc.Utils;
 import simulator.model.Animal;
@@ -64,7 +66,7 @@ public class Main {
 	//
 	private static Double time = null;
 	private static Double deltaTime = null;
-	private static Boolean sv = true;
+	private static Boolean sv = false;
 	
 	private static String inFile = null;
 	private static String outFile = null;
@@ -151,6 +153,7 @@ public class Main {
 	
 	private static void parseSimpleViewerOption(CommandLine line, Options cmdLineOptions) {
 		if (line.hasOption("sv")) {
+			sv = true;
 			HelpFormatter formatter = new HelpFormatter();
 			formatter.printHelp(Main.class.getCanonicalName(), cmdLineOptions, true); //ver helpFormatter;
 			System.exit(0);
@@ -205,7 +208,7 @@ public class Main {
 		
 		List<Builder<Region>> selectionRegionsBuilders = new ArrayList<>();  
 		selectionRegionsBuilders.add(new DefaultRegionBuilder());  
-		selectionRegionsBuilders.add(new DinamicSupplyRegion());  
+		selectionRegionsBuilders.add(new DinamicSupplyRegionBuilder());  
 		factoriaAnimal = new BuilderBasedFactory<Animal>(selectionAnimalBuilders);
 		
 		

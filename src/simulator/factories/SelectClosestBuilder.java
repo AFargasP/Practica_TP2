@@ -8,7 +8,7 @@ import simulator.model.SelectionStrategy;
 public class SelectClosestBuilder extends Builder<SelectionStrategy> {
 
 	public SelectClosestBuilder() {
-		super("closest", "SelectClosest");
+		super("closest", "Select closest animal");
 	}
 
 	@Override
