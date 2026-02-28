@@ -132,7 +132,7 @@ public class Vector2D {
 	}
 	
 	public boolean isOut(double width, double height) {
-		return 0 > x && x >= width && 0 > y && y >= height;
+		return 0 > x || x > width || 0 > y || y > height;
 	}
 
 	public JSONArray asJSONArray() {

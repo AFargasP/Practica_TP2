@@ -154,9 +154,6 @@ public class Main {
 	private static void parseSimpleViewerOption(CommandLine line, Options cmdLineOptions) {
 		if (line.hasOption("sv")) {
 			sv = true;
-			HelpFormatter formatter = new HelpFormatter();
-			formatter.printHelp(Main.class.getCanonicalName(), cmdLineOptions, true); //ver helpFormatter;
-			System.exit(0);
 		}
 	}
 
@@ -209,7 +206,7 @@ public class Main {
 		List<Builder<Region>> selectionRegionsBuilders = new ArrayList<>();  
 		selectionRegionsBuilders.add(new DefaultRegionBuilder());  
 		selectionRegionsBuilders.add(new DinamicSupplyRegionBuilder());  
-		factoriaAnimal = new BuilderBasedFactory<Animal>(selectionAnimalBuilders);
+		factoriaRegiones= new BuilderBasedFactory<Region>(selectionRegionsBuilders);
 		
 		
 	}

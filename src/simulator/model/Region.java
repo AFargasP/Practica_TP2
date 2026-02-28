@@ -31,6 +31,7 @@ public class Region implements Entity, FoodSupplier, RegionInfo {
 		}
 		
 		jsonListaAnimales.put("animals", animalJson);
+		
 		return jsonListaAnimales;
 		
 	}

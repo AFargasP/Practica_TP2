@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import simulator.misc.Utils;
@@ -20,7 +21,7 @@ public class RegionManager implements AnimalMapView{
 	private int regionWidth;
 	private int regionHeight;
 	
-	private Region[][] regions = new Region[rows][cols];
+	private Region[][] regions;
 	private Map<Animal, Region> animalRegion;
 	
 	public RegionManager(int cols, int rows, int width, int height) {
@@ -29,7 +30,9 @@ public class RegionManager implements AnimalMapView{
 		this.mapWidth = width;
 		this.mapHeight = height;
 		this.regionWidth = mapWidth/cols;
-		this.mapHeight = mapHeight/rows;
+		this.regionHeight = mapHeight/rows;
+		
+		regions = new Region[rows][cols];
 		
 		for (int i = 0; i < rows; i++) { 
 		    for (int j = 0; j < cols; j++) {
@@ -38,24 +41,24 @@ public class RegionManager implements AnimalMapView{
 		}
 		
 		this.animalRegion = new HashMap<Animal, Region>();
-		//this.animalRegion = new HashMap<>();
 	}
 	
 	
 	public void setRegion(int row, int col, Region r) {
-		Region oldRegion = regions[col][row];
+		Region oldRegion = regions[row][col];
 		List<Animal> animalsOldRegion = oldRegion.getAnimals();
 		for(Animal a : animalsOldRegion) {
 			r.addAnimal(a);
 			animalRegion.replace(a, oldRegion, r);
 		}
-		regions[col][row] = r;
+		regions[row][col] = r;
 	}
 	
 	private Region regionDelAnimal(Vector2D v) {
-		int x = (int) (v.getX()/regionWidth);
-		int y = (int) (v.getY()/regionHeight);
-		return regions[x][y];
+		int x = (int)v.getX()/regionWidth;
+		int y = (int)v.getY()/regionHeight;
+		
+		return regions[y][x];
 	}
 	
 	private int regionXdelAnimal(double dist) {
@@ -141,46 +144,54 @@ public class RegionManager implements AnimalMapView{
 
 	@Override
 	public List<Animal> getAnimalsInRange(Animal e, Predicate<Animal> filter) {
-		List<Animal> animalsInRange = new ArrayList<>();
-		Predicate<Animal> filterDistance = animal -> (animal.getPosition().distanceTo(e.getPosition()) < animal.getSightRange());
-		
-		double horizontalVisionRangeDcha = e.getPosition().getX() + e.getSightRange();
-		double verticalVisionRangeAbajo = e.getPosition().getY() + e.getSightRange();
-		double horizontalVisionRangeIzq = e.getPosition().getX() - e.getSightRange();
-		double verticalVisionRangeArriba = e.getPosition().getY() - e.getSightRange();	
-		
-		int finalX = regionXdelAnimal(horizontalVisionRangeDcha);
-		int finalY = regionYdelAnimal(verticalVisionRangeAbajo);
-		int initX = regionXdelAnimal(horizontalVisionRangeIzq);
-		int initY = regionYdelAnimal(verticalVisionRangeArriba);
-		
-		Utils.constrainValueInRange(finalX, 0, cols-1);
-		Utils.constrainValueInRange(initX, 0, cols-1);
-		Utils.constrainValueInRange(finalY, 0, rows-1);
-		Utils.constrainValueInRange(initY, 0, rows-1);
-		
-		
-		for (int i = initY; i < finalY; i++) { 
-		    for (int j = initX; j < finalX; j++) {
-		    	animalsInRange = regions[i][j].getAnimals().stream().filter(filter).filter(filterDistance).collect(Collectors.toList());
-		    }
-		}
-		return animalsInRange;
+
+	    List<Animal> animalsInRange = new ArrayList<>();
+
+	    Predicate<Animal> filterDistance =
+	            a -> a.getPosition().distanceTo(e.getPosition()) < e.getSightRange();
+
+	    double x = e.getPosition().getX();
+	    double y = e.getPosition().getY();
+	    double r = e.getSightRange();
+
+	    int initX = (int) Utils.constrainValueInRange(regionXdelAnimal(x - r), 0, cols - 1);
+	    int finalX = (int) Utils.constrainValueInRange(regionXdelAnimal(x + r), 0, cols - 1);
+	    int initY = (int) Utils.constrainValueInRange(regionYdelAnimal(y - r), 0, rows - 1);
+	    int finalY = (int) Utils.constrainValueInRange(regionYdelAnimal(y + r), 0, rows - 1);
+
+	    for (int i = initY; i <= finalY; i++) {
+	        for (int j = initX; j <= finalX; j++) {
+
+	            animalsInRange.addAll(
+	                regions[i][j].getAnimals()
+	                    .stream()
+	                    .filter(filter)
+	                    .filter(filterDistance)
+	                    .collect(Collectors.toList())
+	            );
+	        }
+	    }
+
+	    return animalsInRange;
 	}
 	
 	public JSONObject asJSON() {
-		JSONObject jsonRegion = new JSONObject();
 		JSONObject jsonRegions = new JSONObject();
+		JSONArray jsonArrayRegiones = new JSONArray();
 		
 		for (int i = 0; i < rows; i++) { 
 		    for (int j = 0; j < cols; j++) {
+		    	JSONObject jsonRegion = new JSONObject();
 		    	jsonRegion.put("row", i);
 				jsonRegion.put("col", j);
 				jsonRegion.put("data", regions[i][j].asJSON());
 				
+				jsonArrayRegiones.put(jsonRegion);
+				
 		    }
 		}
-		jsonRegions.put("regions", jsonRegion);
+		
+		jsonRegions.put("regions", jsonArrayRegiones);
 		return jsonRegions;
 	}
 

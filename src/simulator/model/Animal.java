@@ -75,7 +75,7 @@ public abstract class Animal implements AnimalInfo, Entity {
 	}
 	
 	protected void selectMateTarget() {
-		mateTarget = mateStrategy.select(this, regionMngr.getAnimalsInRange(this, animal -> animal.getGeneticCode() == this.getGeneticCode()));
+		mateTarget = mateStrategy.select(this, regionMngr.getAnimalsInRange(this, animal -> (animal.getGeneticCode() == this.getGeneticCode() && !animal.equals(this))));
 	}
 	
 	protected void setDesire(double d) {
@@ -141,7 +141,7 @@ public abstract class Animal implements AnimalInfo, Entity {
 		}
 		this.dest =  Vector2D.getPosAleatoria(0.0, regionMngr.getWidth()-1, 0.0, regionMngr.getHeight()-1);
 	}
-	
+
 	public Animal deliverBaby() {
 		Animal deliveredBaby = this.baby;
 		this.baby = null;
@@ -190,7 +190,7 @@ public abstract class Animal implements AnimalInfo, Entity {
 		jsonObject.put("diet", this.diet);
 		jsonObject.put("state", this.state);
 				
-		System.out.println(jsonObject.toString(3));	//PARA SACARLO POR PANTALLA POR LINEAS SEPARADAS	
+		//System.out.println(jsonObject.toString(3));	//PARA SACARLO POR PANTALLA POR LINEAS SEPARADAS	
 		
 		return jsonObject;
 	}

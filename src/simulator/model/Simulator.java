@@ -14,7 +14,7 @@ public class Simulator implements JSONable{
 	double actualTime;
 	private List<Animal> listaAnimalSimulation;
 	
-	public Simulator(int cols, int rows, int width, int height,   
+	public Simulator(int cols, int rows, int width, int height, 
             Factory<Animal> animalsFactory, Factory<Region> regionsFactory) {
 		
 		this.animalFactory = animalsFactory;
@@ -59,7 +59,17 @@ public class Simulator implements JSONable{
 	
 	public void advance(double dt) {
 		actualTime += dt;
-		listaAnimalSimulation.removeIf(animal -> animal.getState()==State.DEAD);
+		
+		List<Animal> muertos = new ArrayList<>();
+		for (Animal a : listaAnimalSimulation) {
+			if (a.getState() == State.DEAD) {
+				muertos.add(a);
+				regionManager.unregisterAnimal(a);
+			}
+		}
+		listaAnimalSimulation.removeAll(muertos);
+		
+		
 		for(Animal a: listaAnimalSimulation) {
 			a.update(dt);
 			regionManager.updateAnimalRegion(a);
@@ -74,7 +84,10 @@ public class Simulator implements JSONable{
 		        nuevos.add(a.deliverBaby());
 		    }
 		}
-		listaAnimalSimulation.addAll(nuevos);
+		
+		for (Animal bebe : nuevos) {
+			addAnimal(bebe);
+		}
 	}
 	
 	public JSONObject asJSON() {
@@ -86,6 +99,4 @@ public class Simulator implements JSONable{
 		return jsonSim;
 		
 	}
-	
-
 }

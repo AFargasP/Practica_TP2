@@ -32,12 +32,12 @@ public class SheepBuilder extends Builder<Animal> {
 		Vector2D pos = null;
 		
 		if(data.has("pos")) {
-			JSONArray jsonPos = data.getJSONArray("pos");
-			JSONArray jsonX_range = jsonPos.getJSONArray(0);
+			JSONObject jsonPos = data.getJSONObject("pos");
+			JSONArray jsonX_range = jsonPos.getJSONArray("x_range");
 			int initX = jsonX_range.getInt(0);
 			int finalX = jsonX_range.getInt(1);
 			
-			JSONArray jsonY_range = jsonPos.getJSONArray(1);
+			JSONArray jsonY_range = jsonPos.getJSONArray("y_range");
 			int initY = jsonY_range.getInt(0);
 			int finalY = jsonY_range.getInt(1);
 			
@@ -46,5 +46,4 @@ public class SheepBuilder extends Builder<Animal> {
 		}
 		return new Sheep(mateStrategy, dangerStrategy, pos);
 	}
-
 }
